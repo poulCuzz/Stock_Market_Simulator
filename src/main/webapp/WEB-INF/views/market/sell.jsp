@@ -25,5 +25,8 @@
   <form:errors path="priceLimit"/>
     <input type="submit" name="submit" value="sell">
 </form:form>
+<c:if test="${not empty errorMessage}">
+  <div class="alert alert-danger" role="alert">${errorMessage}</div>
+</c:if>
 </body>
 </html>

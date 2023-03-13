@@ -22,5 +22,8 @@
     <form:hidden path="company"/>
     <input type="submit" value="Save">
 </form:form>
+<c:if test="${not empty errorMessage}">
+    <div class="alert alert-danger" role="alert">${errorMessage}</div>
+</c:if>
 </body>
 </html>

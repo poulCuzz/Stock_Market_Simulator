@@ -71,18 +71,16 @@ public class SalesOrdersController {
     public String addSaleOrder(@Valid SalesOrders salesOrders, BindingResult result, @RequestParam int volumen, Model model){
         if(result.hasErrors()) {
             model.addAttribute("salesOrder", salesOrders);
-            System.out.println("!!masz jakiś błąd !!!");
+            System.out.println("!!Error!!");
             return "salesOrder/add";
         }
         Long userId = salesOrders.getUser().getId();
         Long companyId = salesOrders.getCompany().getId();
         User user = userRepository.findById(userId).get();
         SharesHeld sharesHeld = sharesHeldRepository.findFirstByUserIdAndCompanyId(userId, companyId);
-        System.out.println("************************************************************************");
-        System.out.println(volumen);
-        System.out.println(sharesHeld.toString());
         if (volumen > sharesHeld.getVolume()) {
-            System.out.println("!!!ustawiłeś za duży volumen, nie masz tylu akcji!!!");
+
+            model.addAttribute("errorMessage", "You have set the volume too high, you do not have that many shares!");
             model.addAttribute("salesOrder", salesOrders);
             return "salesOrder/add";
         }else if(volumen == sharesHeld.getVolume()) {
@@ -96,7 +94,8 @@ public class SalesOrdersController {
             salesOrdersRepository.save(salesOrders);
             return "redirect:/market";
         }else {
-            System.out.println("!!!!Coś poszło nie tak!!!!");
+            model.addAttribute("errorMessage", "we're sorry, something went wrong");
+            System.out.println("we're sorry, something went wrong");
             return "redirect:/held/list?userId=" + userId;
         }
 
@@ -132,19 +131,20 @@ public class SalesOrdersController {
         try{
             if(buyOrder.getUser() != null) {
                 if(salesOrder.getPriceLimit() <= buyOrder.getPriceLimit()) {
-                    System.out.println("jest już zlecenie na giełdzie zgodne z twoim priceLimit");
+                    model.addAttribute("errorMessage", "There is already an order on the stock exchange that matches your price limit.");
                     return "redirect:/market";
                 }
             }
         }
         catch (NullPointerException e) {
-            System.out.println("!!!buyOrder.getUser jest nullem, czyli nie ma na giełdzie pasującego ogłoszenia!!!");
+            model.addAttribute("errorMessage", "There is no matching announcement on the stock exchange!");
+            e.printStackTrace();
         }
 
 
 
         if(salesOrder.getVolumen() > (sharesHeld.getVolume() + salesOrderMain.getVolumen())) {
-            System.out.println("nie masz tylu akcji");
+            model.addAttribute("errorMessage", "You do not have that many shares!");
             return "redirect:/market";
         }
 

@@ -63,7 +63,7 @@ public class BuyOrdersController {
             }
         }
         if(user.getMoneyUsd() < buyOrder.getPriceLimit() * buyOrder.getVolumen()) {
-            System.out.println("!!! nie masz tylu pieniędzy na koncie żeby kupić !!!");
+            model.addAttribute("errorMessage", "You don't have enough funds to buy these shares!");
             model.addAttribute("buyOrder", buyOrder);
             return "buyOrder/add";
         }
@@ -71,13 +71,14 @@ public class BuyOrdersController {
         try{
             if(salesOrder.getUser() != null){
                 if(buyOrder.getPriceLimit() >= salesOrder.getPriceLimit()) {
-                    System.out.println("jest już zlecenie na giełdzie zgodne z twoim priceLimit");
+                    model.addAttribute("errorMessage", "There is already an order on the stock exchange that matches your price limit!");
                     return "redirect:/market";
                 }
             }
         }
         catch (NullPointerException e) {
-            System.out.println("!!!salesOrder.getUser jest nullem, czyli nie ma na giełdzie pasującego ogłoszenia!!!");
+            model.addAttribute("errorMessage", "There is no matching announcement on the stock exchange!");
+            e.printStackTrace();
         }
 
 

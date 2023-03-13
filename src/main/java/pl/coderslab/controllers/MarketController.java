@@ -91,10 +91,9 @@ public class MarketController {
     public String sellFromMarket(@Valid BuyOrders buyOrders, BindingResult result, @RequestParam String yourId, @RequestParam int volumen, Model model){
         if(result.hasErrors()) {
             model.addAttribute("buyOrders", buyOrders);
-            System.out.println("!!masz jakiś błąd !!!");
+            model.addAttribute("errorMessage", "we're sorry, something went wrong");
             return "market/sell";
         }
-        System.out.println(buyOrders.toString());
         Long userId = buyOrders.getUser().getId();
         Long usersCompanyId = buyOrders.getCompany().getId();
         BuyOrders usersBuyOrder = buyOrdersRepository.findFirstByUser_IdAndCompany_Id(userId, usersCompanyId);
@@ -105,24 +104,24 @@ public class MarketController {
         Long yourIdLong = Long.parseLong(yourId);
         User your = userRepository.findById(yourIdLong).get();
         if(yourIdLong == userId) {
-            System.out.println("!!!nie możesz dokonywać tranzakcji z samym sobą!!!");
+            model.addAttribute("errorMessage", "You cannot execute transactions with yourself!");
             model.addAttribute("buyOrders", buyOrders);
             return "market/sell";
         }
         if(sharesHeldRepository.findFirstByUserIdAndCompanyId(yourIdLong, usersCompanyId) == null) {
-            System.out.println("!!!nie posiadasz tej spółki w portfelu!!!");
+            model.addAttribute("errorMessage", "You do not have these shares in your portfolio!");
             return "redirect:/market";
         }else if(volumen > usersBuyOrder.getVolumen()){
             model.addAttribute("buyOrders", buyOrders);
-            System.out.println("!!!nie ma tyle akcji do kupienia!! Wybierz inną liczbę");
+            model.addAttribute("errorMessage", "There are not that many shares!");
             return "market/sell";
         }else if(volumen > sharesHeldRepository.findFirstByUserIdAndCompanyId(yourIdLong, usersCompanyId).getVolume()){
             model.addAttribute("buyOrders", buyOrders);
-            System.out.println("!!!nie masz tylu akcji w portfelu!!!");
+            model.addAttribute("errorMessage", "You do not have enough shares in portfolio!");
             return "market/sell";
         }
         if (buyOrders.getPriceLimit() < usersPriceLimit) {
-            System.out.println("nie opłaca ci sie sprzedawać po niższej cenie!!");
+            model.addAttribute("errorMessage", "Shares are not sold at a lower price than the one offered on the market");
             model.addAttribute("buyOrders", buyOrders);
             return "market/sell";
         }else if(buyOrders.getPriceLimit() == usersPriceLimit && volumen == usersBuyOrder.getVolumen()) {
@@ -238,8 +237,6 @@ public class MarketController {
                                 @PathVariable int volumen,
                                 @PathVariable double priceLimit, Model model){
         Companies company = companiesRepository.findById(companyId).get();
-        System.out.println("*********************************************************************************************");
-        System.out.println(company.getName());
         SalesOrders salesOrder = salesOrdersRepository.findFirstByUser_IdAndCompany_Id(userId, companyId);
         salesOrder.setCompany(company);
         salesOrder.setVolumen(volumen);
@@ -253,6 +250,7 @@ public class MarketController {
     public String buyFromMarket(@ModelAttribute("salesOrders") @Valid SalesOrders salesOrder, BindingResult result, @RequestParam String yourId, @RequestParam int volumen, Model model){
         if(result.hasErrors()) {
             model.addAttribute("salesOrders", salesOrder);
+            model.addAttribute("errorMessage", "we're sorry, something went wrong");
             System.out.println("!!masz jakiś błąd !!!");
             return "market/buy";
         }
@@ -267,20 +265,20 @@ public class MarketController {
         String dateAndTime = localDateTime.toString().replaceAll("\\..*", "").replaceFirst("T", "  ");
         double usersPriceLimit = usersSalesOrder.getPriceLimit();
         if(yourIdLong == userId) {
-            System.out.println("!!!nie możesz dokonywać tranzakcji z samym sobą!!!");
+            model.addAttribute("errorMessage", "You cannot execute transactions with yourself!");
             model.addAttribute("salesOrders", salesOrder);
             return "market/buy";
         }
         if(userRepository.findById(yourIdLong).get().getMoneyUsd() < salesOrder.getPriceLimit()*volumen) {
-            System.out.println("!!!masz za mało pieniędzy!!!");
+            model.addAttribute("errorMessage", "You don't have enough funds!");
             model.addAttribute("salesOrders", salesOrder);
             return "market/buy";
         }else if(volumen > usersSalesOrder.getVolumen()) {
-            System.out.println("!!!ni możesz kupić więcej akcji niż wystawia sprzedający!!!");
+            model.addAttribute("errorMessage", "You cannot buy more shares than the seller is offering!");
             model.addAttribute("salesOrders", salesOrder);
             return "market/buy";
         }else if(salesOrder.getPriceLimit() > usersPriceLimit){
-            System.out.println("!!!nie opłaca ci się ustalać wyższej ceny!!!");
+            model.addAttribute("errorMessage", "Shares are not bought at a higher price than the one offered on the market!");
             model.addAttribute("salesOrders", salesOrder);
             return "market/buy";
         }

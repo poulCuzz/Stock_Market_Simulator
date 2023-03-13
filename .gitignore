@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 /src/main/webapp/WEB-INF/theme/
+/src/main/java/pl/coderslab/controllers/Test.java
