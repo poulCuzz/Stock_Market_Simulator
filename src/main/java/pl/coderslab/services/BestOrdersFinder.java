@@ -15,25 +15,8 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class BestOrdersFinder {
-
-
     static BuyOrdersRepository buyOrdersRepository;
     static SalesOrdersRepository salesOrdersRepository;
-
-
-    public BuyOrders findBestBuyOrderByCompanyId(Long companyId) {
-
-        List<BuyOrders> list = buyOrdersRepository.findByCompanyId(companyId);
-        if(!list.isEmpty()){
-            List<BuyOrders> result = list.stream()
-                    .sorted(Comparator.comparingDouble(BuyOrders::getPriceLimit).reversed())
-                    .collect(Collectors.toList());
-            result.forEach(System.out::println);
-            return result.get(0);
-        }
-        System.out.println("nie ma takich zleceń");
-        return null;
-    }
 
 
     public void findAllCompaniesId(){
@@ -56,18 +39,6 @@ public class BestOrdersFinder {
     }
 
 
-    public SalesOrders findBestSalesOrderByCompanyId(Long companyId) {
-        List<SalesOrders> list = salesOrdersRepository.findByCompanyId(companyId);
-        if (!list.isEmpty()) {
-            List<SalesOrders> result= list.stream()
-                    .sorted(Comparator.comparingDouble(SalesOrders::getPriceLimit))
-                    .collect(Collectors.toList());
-            System.out.println(result.get(0).toString());
-            return result.get(0);
-        }
-        System.out.println("nie ma takich zleceń");
-        return null;
-    }
 
 
 

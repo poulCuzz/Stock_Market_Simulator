@@ -9,10 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-//import pl.coderslab.CurrentUser;
 import pl.coderslab.User;
 import pl.coderslab.repository.UserRepository;
-import pl.coderslab.services.UserService;
+
 
 import javax.validation.Valid;
 
@@ -21,11 +20,9 @@ import javax.validation.Valid;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final UserService userService;
     @Autowired
-    public UserController(UserRepository userRepository, UserService userService) {
+    public UserController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
     @GetMapping("/create-user")
@@ -39,7 +36,7 @@ public class UserController {
         user.setLastName("Twardowski");
         user.setNick("admin");
         user.setPassword("admin");
-        userService.saveUser(user);
+        userRepository.saveUser(user);
         return "admin";
     }
 

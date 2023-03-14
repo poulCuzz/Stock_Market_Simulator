@@ -6,5 +6,5 @@ import pl.coderslab.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findByNick(String username);
+    void saveUser(User user);
 }
