@@ -2,10 +2,8 @@ package pl.coderslab.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import pl.coderslab.Companies;
 import pl.coderslab.SharesHeld;
 import pl.coderslab.User;
@@ -26,7 +24,13 @@ public class SharesHeldController {
         this.userRepository = userRepository;
         this.sharesHeldRepository = sharesHeldRepository;
     }
-
+    @GetMapping("/portfolio")
+    public ModelAndView showPortfolio(@RequestParam Long userId) {
+        ModelAndView mav = new ModelAndView("portfolio");
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        mav.addObject("user", user);
+        return mav;
+    }
     //kupowanie pierwszych akcji. Nie z rynku tylko bezpośrednio od spółek. Czyli z listy 20 zaznaczam i wybieram ile akcji danej firmy kupuje i dodają się one do sharesHeld
 
     @RequestMapping(value= "/add", method = RequestMethod.GET)

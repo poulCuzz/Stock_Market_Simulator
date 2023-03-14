@@ -1,4 +1,5 @@
 <%@ page import="pl.coderslab.Companies" %>
+<%@ page import="pl.coderslab.User" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%--
@@ -11,12 +12,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Title</title>
+    <title>Stock Market Simulator Application</title>
 </head>
 <body>
+<%
+    User user = (User)request.getAttribute("user");
+    String userNick = user.getNick();
+%>
 
 
-    <h2>Welcome in your wallet</h2><br/>
+<h2>Welcome in your portfolio <%= userNick %></h2><br/>
 <strong></strong>
     <div>
         <label><strong>Value of all your stocks:</strong><lobel></lobel></label><a>&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp&nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp</a><label><strong>Profit/Loss:</strong></label>
