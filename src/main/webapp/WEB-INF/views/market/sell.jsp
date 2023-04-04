@@ -1,4 +1,6 @@
+<%--<%@ page import="pl.coderslab.User" %>--%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+
 <%--
   Created by IntelliJ IDEA.
   User: pawel
@@ -12,13 +14,18 @@
     <title>Title</title>
 </head>
 <body>
+<%--<%--%>
+<%--  User user = (User)request.getAttribute("user");--%>
+<%--  String userNick = user.getNick();--%>
+<%--%>--%>
 <%--@elvariable id="buyOrders" type="pl.coderslab.BuyOrders"--%>
 <form:form method="post" modelAttribute="buyOrders">
   <form:hidden path="company.id"/>
   <form:errors path="company.id"/>
-  <form:hidden path="user.id"/>
+<%--  <form:hidden path="user.id"/>--%>
   <form:errors path="user.id"/>
-  <input type="number" name="yourId" min="1" step="1" required/><label>your Id</label><br/>
+<%--  <input type="number" name="yourId" min="1" step="1" required/><label>your Id</label><br/>--%>
+  <form:input path="user.id" type="number"/><label>your Id</label><br/>
   <form:input path="volumen" type="number"/><label>volume</label><br/>
   <form:errors path="volumen"/>
   <form:input path="priceLimit" type="number"/><label>price Limit</label>
